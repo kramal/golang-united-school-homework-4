@@ -1,8 +1,8 @@
-package string_sum
+package main
 
 import (
 	"errors"
-	"math"
+	"fmt"
 	"strconv"
 	"strings"
 )
@@ -26,12 +26,9 @@ var (
 // Use the errors defined above as described, again wrapping into fmt.Errorf
 
 func StringSum(input string) (output string, err error) {
-	fNum := 0
-	fNumLen := 0
-	fSign := 1
-	sNum := 0
-	sNumLen := 0
-	beginFirst := false
+	plusesCount := 0
+	plusEncounterIndex := 0
+	minusesCount := 0
 
 	input = strings.Replace(input, " ", "", -1)
 	input_len := len(input)
@@ -41,31 +38,36 @@ func StringSum(input string) (output string, err error) {
 	}
 
 	for i := 0; i < input_len; i++ {
-		if input[input_len-i-1] == 43 {
-			if beginFirst == true {
-				return "", errorNotTwoOperands
-			}
-			beginFirst = true
-			continue
+		if input[i] == 43 {
+			plusesCount = plusesCount + 1
+			plusEncounterIndex = i
 		}
-		if !beginFirst && input[input_len-i-1] >= 48 && input[input_len-i-1] <= 57 {
-			sNum = sNum + int(input[input_len-i-1]%48)*int(math.Pow(10, float64(sNumLen)))
-			sNumLen = sNumLen + 1
-		}
-		if beginFirst && input[input_len-i-1] == 45 {
-			fSign = -1
-		}
-		if beginFirst && input[input_len-i-1] >= 48 && input[input_len-i-1] <= 57 {
-			fNum = fNum + int(input[input_len-i-1]%48)*int(math.Pow(10, float64(fNumLen)))
-			fNumLen = fNumLen + 1
+		if input[i] == 45 {
+			minusesCount = minusesCount + 1
 		}
 	}
 
-	if beginFirst == false {
-		return "", err
+	if plusesCount > 1 || plusEncounterIndex == 0 || minusesCount > 2 {
+		return "", errorNotTwoOperands
 	}
 
-	result := fSign*fNum + sNum
+	nums := strings.Split(input, "+")
+	result := 0
+
+	for i := 0; i < len(nums); i++ {
+		n, merr := strconv.Atoi(nums[i])
+		if merr == nil {
+			result = result + n
+		} else {
+			return "", errorNotTwoOperands
+		}
+
+	}
 
 	return strconv.Itoa(result), nil
+}
+
+func main() {
+	s := "-334+-455"
+	fmt.Println(StringSum(s))
 }
