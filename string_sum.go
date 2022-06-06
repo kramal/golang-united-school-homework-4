@@ -1,8 +1,7 @@
-package main
+package string_sum
 
 import (
 	"errors"
-	"fmt"
 	"strconv"
 	"strings"
 )
@@ -65,9 +64,4 @@ func StringSum(input string) (output string, err error) {
 	}
 
 	return strconv.Itoa(result), nil
-}
-
-func main() {
-	s := "-334+-455"
-	fmt.Println(StringSum(s))
 }
