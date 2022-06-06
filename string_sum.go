@@ -3,6 +3,8 @@ package string_sum
 import (
 	"errors"
 	"math"
+	"strconv"
+	"strings"
 )
 
 //use these errors as appropriate, wrapping them with fmt.Errorf function
@@ -31,20 +33,30 @@ func StringSum(input string) (output string, err error) {
 	sNumLen := 0
 	beginFirst := false
 
-	for i := 0; i < len(output); i++ {
-		if output[len(output)-i-1] == 43 {
+	input = strings.Replace(input, " ", "", -1)
+	input_len := len(input)
+
+	if input_len == 0 {
+		return "", errorEmptyInput
+	}
+
+	for i := 0; i < input_len; i++ {
+		if input[input_len-i-1] == 43 {
+			if beginFirst == true {
+				return "", errorNotTwoOperands
+			}
 			beginFirst = true
 			continue
 		}
-		if !beginFirst && output[len(output)-i-1] >= 48 && output[len(output)-i-1] <= 57 {
-			sNum = sNum + int(output[len(output)-i-1]%48)*int(math.Pow(10, float64(sNumLen)))
+		if !beginFirst && input[input_len-i-1] >= 48 && input[input_len-i-1] <= 57 {
+			sNum = sNum + int(input[input_len-i-1]%48)*int(math.Pow(10, float64(sNumLen)))
 			sNumLen = sNumLen + 1
 		}
-		if beginFirst && output[len(output)-i-1] == 45 {
+		if beginFirst && input[input_len-i-1] == 45 {
 			fSign = -1
 		}
-		if beginFirst && output[len(output)-i-1] >= 48 && output[len(output)-i-1] <= 57 {
-			fNum = fNum + int(output[len(output)-i-1]%48)*int(math.Pow(10, float64(fNumLen)))
+		if beginFirst && input[input_len-i-1] >= 48 && input[input_len-i-1] <= 57 {
+			fNum = fNum + int(input[input_len-i-1]%48)*int(math.Pow(10, float64(fNumLen)))
 			fNumLen = fNumLen + 1
 		}
 	}
@@ -53,5 +65,7 @@ func StringSum(input string) (output string, err error) {
 		return "", err
 	}
 
-	return string(fSign*fNum + sNum), nil
+	result := fSign*fNum + sNum
+
+	return strconv.Itoa(result), nil
 }
