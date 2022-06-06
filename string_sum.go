@@ -2,6 +2,7 @@ package string_sum
 
 import (
 	"errors"
+	"math"
 )
 
 //use these errors as appropriate, wrapping them with fmt.Errorf function
@@ -23,5 +24,34 @@ var (
 // Use the errors defined above as described, again wrapping into fmt.Errorf
 
 func StringSum(input string) (output string, err error) {
-	return "", nil
+	fNum := 0
+	fNumLen := 0
+	fSign := 1
+	sNum := 0
+	sNumLen := 0
+	beginFirst := false
+
+	for i := 0; i < len(output); i++ {
+		if output[len(output)-i-1] == 43 {
+			beginFirst = true
+			continue
+		}
+		if !beginFirst && output[len(output)-i-1] >= 48 && output[len(output)-i-1] <= 57 {
+			sNum = sNum + int(output[len(output)-i-1]%48)*int(math.Pow(10, float64(sNumLen)))
+			sNumLen = sNumLen + 1
+		}
+		if beginFirst && output[len(output)-i-1] == 45 {
+			fSign = -1
+		}
+		if beginFirst && output[len(output)-i-1] >= 48 && output[len(output)-i-1] <= 57 {
+			fNum = fNum + int(output[len(output)-i-1]%48)*int(math.Pow(10, float64(fNumLen)))
+			fNumLen = fNumLen + 1
+		}
+	}
+
+	if beginFirst == false {
+		return "", err
+	}
+
+	return string(fSign*fNum + sNum), nil
 }
